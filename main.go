@@ -114,6 +114,7 @@ const (
 	CaloriesWeightMultiplier      = 0.035 // коэффициент для веса
 	CaloriesSpeedHeightMultiplier = 0.029 // коэффициент для роста
 	KmHInMsec                     = 0.278 // коэффициент для перевода км/ч в м/с
+	SmInM                         = 100   // коэффициент для перевода см в метры
 )
 
 // Walking структура описывающая тренировку Ходьба
@@ -131,7 +132,7 @@ func (w Walking) Calories() float64 {
 	if w.Height == 0 {
 		return 0
 	}
-	return ((CaloriesWeightMultiplier*w.Weight + (math.Pow(w.meanSpeed()*KmHInMsec, 2)/(w.Height/100))*CaloriesSpeedHeightMultiplier*w.Weight) * float64(w.Duration.Hours()) * MinInHours)
+	return ((CaloriesWeightMultiplier*w.Weight + (math.Pow(w.meanSpeed()*KmHInMsec, 2)/(w.Height/SmInM))*CaloriesSpeedHeightMultiplier*w.Weight) * float64(w.Duration.Hours()) * MinInHours)
 }
 
 // TrainingInfo возвращает структуру InfoMessage с информацией о проведенной тренировке.
@@ -170,9 +171,6 @@ func (s Swimming) meanSpeed() float64 {
 // (средняя_скорость_в_км/ч + SwimmingCaloriesMeanSpeedShift) * SwimmingCaloriesWeightMultiplier * вес_спортсмена_в_кг * время_тренировки_в_часах
 // Это переопределенный метод Calories() из Training.
 func (s Swimming) Calories() float64 {
-	if s.Duration.Hours() == 0 {
-		return 0
-	}
 	return (s.meanSpeed() + SwimmingCaloriesMeanSpeedShift) * SwimmingCaloriesWeightMultiplier * s.Weight * float64(s.Duration.Hours())
 }
 
